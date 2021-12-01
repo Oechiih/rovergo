@@ -1,4 +1,4 @@
-name: Release Binaries
+name: Container build
 
 on:
   push:
@@ -8,8 +8,7 @@ on:
 jobs:
   auto-release:
     env:
-      IMAGE_REG: symphonydev.azurecr.io
-      REGISTRY_USER: symphonydev
+      IMAGE_NAME: "rover"
     runs-on: ubuntu-latest
 
     steps:
@@ -24,30 +23,38 @@ jobs:
         with:
           go-version: 1.16
 
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
-        if: ${{ !env.ACT }}
-        with:
-          version: latest
-          args: release --rm-dist
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Not sure why this is here...
+      # - name: Run GoReleaser
+      #   uses: goreleaser/goreleaser-action@v2
+      #   if: ${{ !env.ACT }}
+      #   with:
+      #     version: latest
+      #     args: release --rm-dist
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build & Push Dev Containers Images
         run: |
-          echo ${{ secrets.REGISTRY_PWD }} | docker login $IMAGE_REG -u $REGISTRY_USER --password-stdin
-          make image IMAGE_TAG=${GITHUB_REF##*/}
-          make image IMAGE_TAG=latest
-          make image-dev IMAGE_TAG=${GITHUB_REF##*/}
-          make image-dev IMAGE_TAG=latest
-          make push IMAGE_TAG=${GITHUB_REF##*/}
-          make push IMAGE_TAG=latest
+          make build
+          make github
 
-      - name: Run GoReleaser (local / act)
-        if: ${{ env.ACT }}
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          version: latest
-          args: release --rm-dist --skip-publish
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Log in to registry
+        # This is where you will update the PAT to GITHUB_TOKEN
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push image
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+
+          # Change all uppercase to lowercase
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "master" ] && VERSION=latest
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION

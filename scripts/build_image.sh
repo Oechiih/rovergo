@@ -25,7 +25,7 @@ function build_base_rover_image {
 
   case "${strategy}" in
     "github")
-      registry="aztfmod/"
+      registry="oechiih/"
       tag=${versionTerraform}-${tag_date_release}
       export rover="${registry}rover:${tag}"
       export tag_strategy=""
