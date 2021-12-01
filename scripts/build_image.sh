@@ -67,8 +67,8 @@ function build_base_rover_image {
     "local")
       ;;
     *)
-      echo "Pushing rover image to the docker regsitry"
-      sudo versionRover="${rover}" docker-compose push rover_registry
+      # echo "Pushing rover image to the docker regsitry"
+      # sudo versionRover="${rover}" docker-compose push rover_registry
       ;;
   esac
 
@@ -107,9 +107,9 @@ function build_rover_agents {
       ;;
     *)
     if [ "$strategy" == "ci" ]; then
-      sudo tag="${tag}" registry="${registry}" tag_strategy="${tag_strategy}" docker-compose push gitlab
+      # sudo tag="${tag}" registry="${registry}" tag_strategy="${tag_strategy}" docker-compose push gitlab
     else
-      sudo tag="${tag}" registry="${registry}" tag_strategy="${tag_strategy}" docker-compose push
+      # sudo tag="${tag}" registry="${registry}" tag_strategy="${tag_strategy}" docker-compose push
     fi
     ;;
   esac
