@@ -106,11 +106,11 @@ function build_rover_agents {
     "local")
       ;;
     *)
-    if [ "$strategy" == "ci" ]; then
+    # if [ "$strategy" == "ci" ]; then
       # sudo tag="${tag}" registry="${registry}" tag_strategy="${tag_strategy}" docker-compose push gitlab
-    else
+    # else
       # sudo tag="${tag}" registry="${registry}" tag_strategy="${tag_strategy}" docker-compose push
-    fi
+    # fi
     ;;
   esac
 
