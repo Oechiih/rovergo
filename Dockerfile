@@ -48,6 +48,7 @@ ENV SSH_PASSWD=${SSH_PASSWD} \
 
 WORKDIR /tf/rover
 COPY ./.pip_to_patch_latest .
+COPY ./bin/rover /tf/rover
 
 # installation common tools
 RUN apt-get update && \
