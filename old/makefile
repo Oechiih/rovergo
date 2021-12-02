@@ -27,7 +27,7 @@ lint-fix: ## 🌟 Lint & format, will try to fix errors and modify code
 	$(GOLINT_PATH) run --modules-download-mode=mod ./... --fix
 
 build: ## 🔨 Build the rover binary and place into ./bin/
-	go build -ldflags "-X github.com/aztfmod/rover/pkg/version.Value='$(VERSION)'" -o bin/rover 
+	go build -ldflags "-X github.com/aztfmod/rover/pkg/version.Value='$(VERSION)'" -o bin/rover
 
 run: ## 🏃‍ Run locally, with hot reload, it's not very useful
 	go run main.go $(ARGS)
