@@ -3,7 +3,7 @@ module github.com/aztfmod/rover
 go 1.16
 
 require (
-	github.com/Azure/azure-sdk-for-go v55.3.0+incompatible
+	github.com/Azure/azure-sdk-for-go v59.4.0+incompatible
 	github.com/Azure/azure-storage-blob-go v0.13.0
 	github.com/Azure/go-autorest/autorest v0.11.18
 	github.com/Azure/go-autorest/autorest/azure/auth v0.5.7
