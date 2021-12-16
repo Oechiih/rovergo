@@ -1,11 +1,19 @@
 FROM ubuntu:21.04 as builder
+
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update &&\
     apt-get install -y \
     ca-certificates \
     git \
-    golang
+    golang \
+    gnupg \
+    software-properties-common \
+    curl \
+    unzip \
+    jq \
+    sudo
 
-WORKDIR ./src
+WORKDIR /src
 
 COPY ./src/go.mod .
 COPY ./src/go.sum .
@@ -15,6 +23,10 @@ RUN go mod download
 COPY ./src .
 
 RUN go build
+
+WORKDIR /porcelain/binaries
+COPY ./porcelain /porcelain
+RUN sudo cat /porcelain/install_terraform.sh | bash
 
 FROM ubuntu:21.04 as app
 
@@ -33,3 +45,4 @@ RUN apt-get update &&\
 RUN pip install azure-cli
 
 COPY --from=builder /src/rover .
+COPY --from=builder /porcelain/binaries/terraform /usr/local/bin/terraform
