@@ -37,12 +37,7 @@ RUN apt-get update &&\
     ca-certificates \
     curl \
     apt-transport-https \
-    lsb-release \
-    gnupg \
-    python3 \
-    python3-pip
+    git
 
-RUN pip install azure-cli
-
-COPY --from=builder /src/rover .
+COPY --from=builder /src/rover /usr/local/bin/rover
 COPY --from=builder /porcelain/binaries/terraform /usr/local/bin/terraform

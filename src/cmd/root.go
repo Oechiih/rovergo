@@ -13,7 +13,7 @@ import (
 	"strings"
 
 	"github.com/aztfmod/rover/pkg/builtin/actions"
-	"github.com/aztfmod/rover/pkg/command"
+	// "github.com/aztfmod/rover/pkg/command"
 	"github.com/aztfmod/rover/pkg/console"
 	"github.com/aztfmod/rover/pkg/custom"
 	"github.com/aztfmod/rover/pkg/landingzone"
@@ -28,9 +28,9 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "rover",
 	Short: "Rover is a tool to assist the deployment of the Azure CAF Terraform landingzones",
-	Long: `Azure CAF rover is a command line tool in charge of the deployment of the landing zones in your 
+	Long: `Azure CAF rover is a command line tool in charge of the deployment of the landing zones in your
 Azure environment.
-It acts as a toolchain development environment to avoid impacting the local machine but more importantly 
+It acts as a toolchain development environment to avoid impacting the local machine but more importantly
 to make sure that all contributors in the GitOps teams are using a consistent set of tools and version.`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		console.DebugEnabled, _ = cmd.Flags().GetBool("debug")
@@ -60,7 +60,7 @@ func init() {
 
 	rootCmd.SetHelpCommand(helpCmd)
 
-	command.ValidateDependencies()
+	// command.ValidateDependencies()
 
 	// Ensure rover home exists and create the default contents
 	_, err := rover.HomeDirectory()

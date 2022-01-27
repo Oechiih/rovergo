@@ -12,7 +12,6 @@ fi
 # Download the latest terraform (arch specific), install to global environment.
 gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B36CBA91A2C0730C435FC280B0B441097685B676
 TF_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M ".current_version")
-# TECHDEBT: Use curl instead of wget - why use 2 separate tools for the same job?
 curl -k -o terraform.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_${arch}.zip
 curl -k -o terraform.sha256 https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS
 curl -k -o terraform.sha256.sig https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS.sig
