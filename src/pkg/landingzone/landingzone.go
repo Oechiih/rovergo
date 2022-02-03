@@ -23,6 +23,8 @@ import (
 
 	"github.com/hashicorp/terraform-exec/tfexec"
 	"github.com/spf13/cobra"
+
+	"github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-05-01/resources"
 )
 
 const terraformParallelism = 30
@@ -92,6 +94,7 @@ func (c *TerraformAction) prepareTerraformCAF(o *Options) (*tfexec.Terraform, er
 // SetupEnvironment for all the terraform env vars AND values in options stuct
 func (o *Options) SetupEnvironment() error {
 	// Get current Azure details, subscription etc from CLI
+
 	acct, err := azure.GetSubscription()
 	cobra.CheckErr(err)
 
@@ -153,6 +156,7 @@ func (o *Options) SetupEnvironment() error {
 
 // Try to get our identity which might be user, managed-identity or service principal
 func getIdentity(acct azure.Subscription, targetSubID string) azure.Identity {
+
 	if strings.EqualFold(acct.User.Usertype, "user") {
 		console.Debug("Detected we are signed in as a user. Attempting to get identity from CLI")
 		ident, err := azure.GetSignedInIdentity()
@@ -198,6 +202,33 @@ func getIdentity(acct azure.Subscription, targetSubID string) azure.Identity {
 		cobra.CheckErr(err)
 		return *identity
 	} else {
+
+		sub, err := azure.GetSubscription()
+
+		if err != nil {
+			console.Errorf("failed to subscription: %v\n", err)
+		}
+		groupsClient := resources.NewGroupsClient(sub.ID)
+		a, err := azure.GetAuthorizer()
+
+		if err != nil {
+			console.Errorf("failed to initialize authorizer: %v\n", err)
+		}
+
+		groupsClient.Authorizer = a
+		groupsClient.AddToUserAgent("sdk-samples")
+
+		ctx := context.Background()
+
+		fmt.Printf("authenticated to azure..getting groups in sub %s", sub.ID)
+		for list, err := groupsClient.ListComplete(ctx, "", nil); list.NotDone(); err = list.NextWithContext(ctx) {
+			if err != nil {
+				console.Errorf("got error: %s", err)
+			}
+			rgName := *list.Value().Name
+			fmt.Printf("group '%s'\n", rgName)
+		}
+
 		console.Error("Signed in identity is of unknown type")
 		console.Errorf("%+v", acct)
 		cobra.CheckErr("Rover cannot continue")

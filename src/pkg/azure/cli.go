@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"strings"
 
+	"os"
+
 	"github.com/aztfmod/rover/pkg/command"
 	"github.com/aztfmod/rover/pkg/console"
 )
@@ -67,21 +69,7 @@ type Identity struct {
 // GetSubscription gets the current logged in details from the Azure CLI
 // Will fail and exit if they aren't found
 func GetSubscription() (*Subscription, error) {
-	err := command.CheckCommand("az")
-	if err != nil {
-		return nil, err
-	}
-
-	cmdRes, err := command.QuickRun("az", "account", "show", "-o=json")
-	if err != nil {
-		return nil, err
-	}
-
-	sub := &Subscription{}
-	err = json.Unmarshal([]byte(cmdRes), sub)
-	if err != nil {
-		return nil, err
-	}
+	sub := &Subscription{Name: os.Getenv("SubscriptionName"),TenantID: os.Getenv("TenantId"), ID: os.Getenv("SubscriptionId")}
 
 	console.Successf("Azure subscription is: %s (%s)\n", sub.Name, sub.ID)
 	return sub, nil

@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"strings"
 
+	// "encoding/json"
+
 	"github.com/Azure/azure-sdk-for-go/services/preview/authorization/mgmt/2020-04-01-preview/authorization"
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/azure/auth"
@@ -24,7 +26,7 @@ const OwnerRoleDefintionID = "8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
 // This should always be called before any Azure SDK calls
 func GetAuthorizer() (autorest.Authorizer, error) {
 	// We defer everything to the Azure CLI
-	azureAuthorizer, err := auth.NewAuthorizerFromCLI()
+	azureAuthorizer, err := auth.c()
 	if err != nil {
 		return nil, err
 	}
